@@ -10,7 +10,33 @@ function ProductBox({product, price, priority, setPriority, key}){
       <div className="bg-white cursor-pointer" onClick={()=>setPriority((x)=>x-1)}>-</div>
   </div>)
 }
-
+function Knapsack(prodList, limited){
+  
+  const price = prodList.map((value) => value.price);
+  const priority = prodList.map((value) => value.priority);
+  const dp = new Array(limited+1).fill(0);
+  const parent = new Array(limited+1).fill(-1);
+  for(var i = 0; i < limited ; ++i){
+    for(var j = 0; j < price.length(); ++j){
+      if(price[j] <= i && dp[i] < dp[i-price[j]] + priority[j]){
+          dp[i] = dp[i-price[j]] + priority[j]
+          parent[i] = j; 
+      }
+    }
+  }
+  for(var i = limited; i >= 0 ; --i){
+    if(dp[i] != 0){
+      const ans = [];
+      var current_budget = i;
+      while(current_budget != 0){
+        ans.push(parent[current_budget]);
+        current_budget -= price[parent[current_budget]];
+      }
+      return ans.map((value)=>prodList[value])
+    }
+  }
+  return [];
+}
 function App() {
   const [product, setProduct] = useState('');
   const [price, setPrice] = useState(0);
